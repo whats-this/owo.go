@@ -30,7 +30,7 @@ var (
 	// APIShortenURL to send GETs with urls to
 	APIShortenURL = APIRoot + "/shorten/polr"
 
-	// CDNs represnts a list of CDNs available as of 27/12/2016
+	// CDNs represnts a list of CDNs available as of 04/01/2017
 	CDNs = []string{
 		"https://owo.whats-th.is/",
 		"https://i.am-a.ninja/",
@@ -39,5 +39,7 @@ var (
 		"https://all.foxgirlsare.sexy/",
 		"https://i.stole-a-me.me/",
 		"https://can-i-ask-dean-on-a.date/",
+		"https://this.is-a.dog/",
+		"https://deanis.sexy/",
 	}
 )
