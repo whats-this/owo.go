@@ -1,0 +1,10 @@
+repo: whats-this/owo.go
+binary_name: gowo
+build:
+  arches:
+    - amd64
+    - 386
+  oses:
+    - windows
+    - darwin
+    - linux

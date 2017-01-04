@@ -1,0 +1,18 @@
+language: go
+go:
+    - 1.7
+services:
+    - docker
+install:
+    - go get -u -t -v ./...
+    - go get github.com/golang/lint/golint golang.org/x/tools/cmd/goimports
+scripts:
+    - diff <(gofmt -d .) <(echo -n)
+    - go vet -x ./...
+    - golint ./...
+    - ./test.sh
+after_success:
+    - bash <(curl -s https://codecov.io/bash)
+    - if [ -n "$TRAVIS_TAG" ]; then
+        bash <(curl -s https://raw.githubusercontent.com/goreleaser/get/master/latest);
+        fi
