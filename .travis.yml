@@ -1,8 +1,6 @@
 language: go
 go:
     - 1.7
-services:
-    - docker
 install:
     - go get -u -t -v ./...
     - go get github.com/golang/lint/golint golang.org/x/tools/cmd/goimports
