@@ -26,6 +26,7 @@ import (
 	"log"
 	"os"
 
+	humanize "github.com/dustin/go-humanize"
 	"github.com/spf13/cobra"
 
 	"fmt"
@@ -46,6 +47,13 @@ var uploadCmd = &cobra.Command{
 			file, err := os.Open(arg)
 			if err != nil {
 				log.Fatal(err)
+			}
+			stat, err := file.Stat()
+			if err != nil {
+				log.Fatal(err)
+			}
+			if stat.Size() > owo.FileUploadLimit {
+				log.Fatal(fmt.Errorf("[pre-flight] File '%s' exceeds upload limit (%s > %s)", file.Name(), humanize.Bytes(uint64(stat.Size())), humanize.Bytes(owo.FileUploadLimit)))
 			}
 			files[idx] = owo.NamedReader{file, arg}
 			defer file.Close()
