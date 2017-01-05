@@ -22,16 +22,11 @@
 package cmd
 
 import (
-	"bytes"
-	"context"
-	"fmt"
 	"log"
 	"time"
 
-	"github.com/atotto/clipboard"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	owo "github.com/whats-this/owo.go"
 
 	"sync"
 
@@ -63,6 +58,7 @@ var watchCmd = &cobra.Command{
 			if err != nil {
 				log.Fatal(err)
 			}
+			log.Printf(`Added "%s" to watcher.`, arg)
 		}
 
 		go func() {
@@ -80,38 +76,7 @@ var watchCmd = &cobra.Command{
 					continue
 				}
 
-				files, err := owo.FilesToNamedReaders(names)
-				if err != nil {
-					log.Println("[upload]", err)
-					return
-				}
-				response, err := owo.UploadFiles(context.Background(), files)
-				if err != nil {
-					log.Println("[upload]", err)
-					return
-				}
-				if !response.Success {
-					log.Printf("[upload] %d: %s", response.Errorcode, response.Description)
-					return
-				}
-				buf := bytes.Buffer{}
-				for _, file := range response.Files {
-					if file.Error {
-						log.Printf("%d: %s", file.Errorcode, file.Description)
-						continue
-					}
-					fmt.Fprintf(&buf, "%s\n", file.WithCDN(cdn))
-				}
-				if shouldClipboard {
-					err = clipboard.WriteAll(buf.String())
-					if err != nil {
-						log.Println("[upload]", err)
-						return
-					}
-					log.Printf("Wrote %d URLs to clipboard", len(response.Files))
-				} else {
-					fmt.Print(buf.String())
-				}
+				go func() { DoUpload(cdn, names) }()
 			}
 		}()
 

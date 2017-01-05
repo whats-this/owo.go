@@ -36,41 +36,54 @@ import (
 	"github.com/whats-this/owo.go"
 )
 
+func DoUpload(cdn string, names []string) {
+	files, err := owo.FilesToNamedReaders(names)
+	if err != nil {
+		log.Println("[upload]", err)
+		return
+	}
+	response, err := owo.UploadFiles(context.Background(), files)
+	if err != nil {
+		log.Println("[upload]", err)
+		return
+	}
+	if !response.Success {
+		log.Printf("[upload] %d: %s", response.Errorcode, response.Description)
+		return
+	}
+	buf := bytes.Buffer{}
+	for _, file := range response.Files {
+		if file.Error {
+			log.Printf("%d: %s", file.Errorcode, file.Description)
+			continue
+		}
+		fmt.Fprintf(&buf, "%s\n", file.WithCDN(cdn))
+	}
+	if shouldClipboard {
+		err = clipboard.WriteAll(buf.String())
+		if err != nil {
+			log.Println("[upload]", err)
+			return
+		}
+		log.Printf("Wrote %d URLs to clipboard", len(response.Files))
+	} else {
+		fmt.Print(buf.String())
+	}
+	response = nil
+	files = nil
+}
+
 // uploadCmd represents the upload command
 var uploadCmd = &cobra.Command{
 	Use:     "upload",
 	Aliases: []string{"up", "whats"},
 	Short:   "Upload files to OwO",
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			log.Fatal("Need at least one file.")
+		}
 		cdn := viper.GetString("cdn")
-		files, err := owo.FilesToNamedReaders(args)
-		if err != nil {
-			log.Fatal(err)
-		}
-		response, err := owo.UploadFiles(context.Background(), files)
-		if err != nil {
-			log.Fatal(err)
-		}
-		if !response.Success {
-			log.Fatalf("%d: %s", response.Errorcode, response.Description)
-		}
-		buf := bytes.Buffer{}
-		for _, file := range response.Files {
-			if file.Error {
-				log.Printf("%d: %s", file.Errorcode, file.Description)
-				continue
-			}
-			fmt.Fprintf(&buf, "%s\n", file.WithCDN(cdn))
-		}
-		if shouldClipboard {
-			err = clipboard.WriteAll(buf.String())
-			if err != nil {
-				log.Fatal(err)
-			}
-			log.Printf("Wrote %d URLs to clipboard", len(response.Files))
-		} else {
-			fmt.Print(buf.String())
-		}
+		DoUpload(cdn, args)
 	},
 }
 
