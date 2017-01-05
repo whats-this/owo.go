@@ -3,11 +3,10 @@ package owo
 import (
 	"fmt"
 	"io"
+	"math"
 	"os"
 
 	"bytes"
-
-	humanize "github.com/dustin/go-humanize"
 )
 
 // FilesToNamedReaders Converts a list of file names to named readers.
@@ -49,6 +48,28 @@ type ErrFileTooBig struct {
 	Filesize uint64
 }
 
+var sizes = []string{"B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB"}
+var fileUploadLimitSize = humanateBytes(FileUploadLimit, 1024, sizes)
+
 func (e ErrFileTooBig) Error() string {
-	return fmt.Sprintf("[pre-flight] File '%s' exceeds upload limit (%s > %s)", e.Filename, humanize.Bytes(e.Filesize), humanize.Bytes(FileUploadLimit))
+	return fmt.Sprintf("[pre-flight] File '%s' exceeds upload limit (%s > %s)", e.Filename, humanateBytes(e.Filesize, 1024, sizes), fileUploadLimitSize)
+}
+
+func logn(n, b float64) float64 {
+	return math.Log(n) / math.Log(b)
+}
+
+func humanateBytes(s uint64, base float64, sizes []string) string {
+	if s < 10 {
+		return fmt.Sprintf("%d B", s)
+	}
+	e := math.Floor(logn(float64(s), base))
+	suffix := sizes[int(e)]
+	val := math.Floor(float64(s)/math.Pow(base, e)*10+0.5) / 10
+	f := "%.0f %s"
+	if val < 10 {
+		f = "%.1f %s"
+	}
+
+	return fmt.Sprintf(f, val, suffix)
 }
