@@ -39,7 +39,7 @@ import (
 // uploadCmd represents the upload command
 var uploadCmd = &cobra.Command{
 	Use:     "upload",
-	Aliases: []string{"up"},
+	Aliases: []string{"up", "whats"},
 	Short:   "Upload files to OwO",
 	Run: func(cmd *cobra.Command, args []string) {
 		cdn := viper.GetString("cdn")
