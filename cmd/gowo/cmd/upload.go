@@ -29,6 +29,9 @@ import (
 
 	"fmt"
 
+	"bytes"
+
+	"github.com/atotto/clipboard"
 	"github.com/spf13/viper"
 	"github.com/whats-this/owo.go"
 )
@@ -51,12 +54,22 @@ var uploadCmd = &cobra.Command{
 		if !response.Success {
 			log.Fatalf("%d: %s", response.Errorcode, response.Description)
 		}
+		buf := bytes.Buffer{}
 		for _, file := range response.Files {
 			if file.Error {
 				log.Printf("%d: %s", file.Errorcode, file.Description)
 				continue
 			}
-			fmt.Println(file.WithCDN(cdn))
+			fmt.Fprintf(&buf, "%s\n", file.WithCDN(cdn))
+		}
+		if shouldClipboard {
+			err = clipboard.WriteAll(buf.String())
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Printf("Wrote %d URLs to clipboard", len(response.Files))
+		} else {
+			fmt.Print(buf.String())
 		}
 	},
 }

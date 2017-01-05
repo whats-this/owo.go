@@ -2,7 +2,10 @@ package owo
 
 import (
 	"fmt"
+	"io"
 	"os"
+
+	"bytes"
 
 	humanize "github.com/dustin/go-humanize"
 )
@@ -26,8 +29,16 @@ func FilesToNamedReaders(names []string) (files []NamedReader, err error) {
 			err = ErrFileTooBig{file.Name(), uint64(stat.Size())}
 			return
 		}
-		files[idx] = NamedReader{file, name}
-		defer file.Close()
+		var bb bytes.Buffer
+		_, err = io.Copy(&bb, file)
+		if err != nil {
+			return
+		}
+		files[idx] = NamedReader{bytes.NewReader(bb.Bytes()), name}
+		err = file.Close()
+		if err != nil {
+			return
+		}
 	}
 	return
 }
