@@ -24,9 +24,7 @@ package cmd
 import (
 	"context"
 	"log"
-	"os"
 
-	humanize "github.com/dustin/go-humanize"
 	"github.com/spf13/cobra"
 
 	"fmt"
@@ -42,21 +40,9 @@ var uploadCmd = &cobra.Command{
 	Short:   "Upload files to OwO",
 	Run: func(cmd *cobra.Command, args []string) {
 		cdn := viper.GetString("cdn")
-		files := make([]owo.NamedReader, len(args))
-		for idx, arg := range args {
-			file, err := os.Open(arg)
-			if err != nil {
-				log.Fatal(err)
-			}
-			stat, err := file.Stat()
-			if err != nil {
-				log.Fatal(err)
-			}
-			if stat.Size() > owo.FileUploadLimit {
-				log.Fatal(fmt.Errorf("[pre-flight] File '%s' exceeds upload limit (%s > %s)", file.Name(), humanize.Bytes(uint64(stat.Size())), humanize.Bytes(owo.FileUploadLimit)))
-			}
-			files[idx] = owo.NamedReader{file, arg}
-			defer file.Close()
+		files, err := owo.FilesToNamedReaders(args)
+		if err != nil {
+			log.Fatal(err)
 		}
 		response, err := owo.UploadFiles(context.Background(), files)
 		if err != nil {
