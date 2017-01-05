@@ -22,10 +22,12 @@
 package cmd
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"log"
 
+	"github.com/atotto/clipboard"
 	"github.com/spf13/cobra"
 
 	"github.com/whats-this/owo.go"
@@ -40,8 +42,18 @@ var shortenCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
+		buf := bytes.Buffer{}
 		for _, short := range shortend {
-			fmt.Println(short)
+			fmt.Fprintf(&buf, "%s\n", short)
+		}
+		if shouldClipboard {
+			err = clipboard.WriteAll(buf.String())
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Printf("Wrote %d URLs to clipboard", len(shortend))
+		} else {
+			fmt.Print(buf.String())
 		}
 	},
 }
