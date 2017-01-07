@@ -12,7 +12,6 @@ scripts:
 after_success:
     - bash <(curl -s https://codecov.io/bash)
     - if [ -n "$TRAVIS_TAG" ]; then
-        cd cmd/gowo;
         go get github.com/inconshreveable/mousetrap;
         bash <(curl -s https://raw.githubusercontent.com/goreleaser/get/master/latest);
         fi
