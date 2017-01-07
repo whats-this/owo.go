@@ -79,7 +79,12 @@ var watchCmd = &cobra.Command{
 					continue
 				}
 
-				go doUpload(cdn, names)
+				go func() {
+					err := doUpload(cdn, names)
+					if err != nil {
+						log.Print(err)
+					}
+				}()
 			}
 		}()
 

@@ -33,33 +33,32 @@ import (
 	"github.com/whats-this/owo.go"
 )
 
-func doUpload(cdn string, names []string) {
-	files, err := owo.FilesToNamedReaders(names)
+func doUpload(cdn string, names []string) (err error) {
+	var files []owo.NamedReader
+	files, err = owo.FilesToNamedReaders(names)
 	if err != nil {
-		log.Println("[upload]", err)
 		return
 	}
-	response, err := owo.UploadFiles(context.Background(), files)
+	var response *owo.Response
+	response, err = owo.UploadFiles(context.Background(), files)
 	if err != nil {
-		log.Println("[upload]", err)
-		return
-	}
-	if !response.Success {
-		log.Printf("[upload] %d: %s", response.Errorcode, response.Description)
 		return
 	}
 	buf := bytes.Buffer{}
+	var url string
 	for _, file := range response.Files {
-		if file.Error {
-			log.Printf("%d: %s", file.Errorcode, file.Description)
-			continue
+		url, err = file.WithCDN(cdn)
+		if err != nil {
+			log.Println("[upload]", err)
 		}
-		fmt.Fprintf(&buf, "%s\n", file.WithCDN(cdn))
+		fmt.Fprintf(&buf, "%s\n", url)
 	}
-	if err := output(buf.String(), len(response.Files)); err != nil {
-		log.Println("[upload]", err)
+	err = output(buf.String(), len(response.Files))
+	if err != nil {
+		return
 	}
 	response = nil
+	return
 }
 
 // uploadCmd represents the upload command
@@ -72,7 +71,9 @@ var uploadCmd = &cobra.Command{
 			log.Fatal("Need at least one file.")
 		}
 		cdn := viper.GetString("cdn")
-		doUpload(cdn, args)
+		if err := doUpload(cdn, args); err != nil {
+			log.Fatal(err)
+		}
 	},
 }
 

@@ -55,6 +55,10 @@ func (e ErrUploadFailed) Error() string {
 }
 
 // WithCDN returns file url prefixed with the CDN
-func (f File) WithCDN(cdn string) string {
-	return cdn + f.URL
+func (f File) WithCDN(cdn string) (string, error) {
+	if f.Error {
+		return "", ErrUploadFailed{f.Description, f.Errorcode}
+	}
+
+	return cdn + f.URL, nil
 }
