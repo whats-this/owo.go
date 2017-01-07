@@ -2,11 +2,11 @@
 
 # Install
 
-1. Gain an API key in order to be actually able to use the service.
-2.
-  a) If you want to just use the CLI go [here](https://github.com/whats-this/owo.go/releases) and download it for your system.
-  b) Run the command `go get -u github.com/whats-this/owo.go/...`, this should get the library and build/install latest CLI.
-3. Check the CLI to learn how to use the library.
+ 1. Gain an API key in order to be actually able to use the service.
+ 2. 
+     1. If you want to just use the CLI go [here](https://github.com/whats-this/owo.go/releases) and download it for your system.
+     2. Run the command `go get -u github.com/whats-this/owo.go/...`, this should get the library and build/install latest CLI.
+ 3. Check the CLI to learn how to use the library.
 
 # Contribute
 
