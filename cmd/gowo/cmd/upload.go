@@ -70,7 +70,6 @@ func DoUpload(cdn string, names []string) {
 		fmt.Print(buf.String())
 	}
 	response = nil
-	files = nil
 }
 
 // uploadCmd represents the upload command
