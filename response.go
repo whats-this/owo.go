@@ -22,6 +22,7 @@
 package owo
 
 type (
+	// Response contains json marshalled response from owo
 	Response struct {
 		Success     bool   `json:"success"`
 		Errorcode   int    `json:"errorcode"`
@@ -29,6 +30,7 @@ type (
 		Files       []File `json:"files"`
 	}
 
+	// File represents a single file from json response (if there were no errors)
 	File struct {
 		Hash        string `json:"hash,omitempty"`
 		Name        string `json:"name,omitempty"`
@@ -40,6 +42,7 @@ type (
 	}
 )
 
+// WithCDN returns file url prefixed with the CDN
 func (f File) WithCDN(cdn string) string {
 	return cdn + f.URL
 }

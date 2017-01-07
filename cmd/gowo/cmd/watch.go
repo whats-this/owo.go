@@ -76,7 +76,7 @@ var watchCmd = &cobra.Command{
 					continue
 				}
 
-				go func() { DoUpload(cdn, names) }()
+				go doUpload(cdn, names)
 			}
 		}()
 

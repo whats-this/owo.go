@@ -36,7 +36,7 @@ import (
 	"github.com/whats-this/owo.go"
 )
 
-func DoUpload(cdn string, names []string) {
+func doUpload(cdn string, names []string) {
 	files, err := owo.FilesToNamedReaders(names)
 	if err != nil {
 		log.Println("[upload]", err)
@@ -82,7 +82,7 @@ var uploadCmd = &cobra.Command{
 			log.Fatal("Need at least one file.")
 		}
 		cdn := viper.GetString("cdn")
-		DoUpload(cdn, args)
+		doUpload(cdn, args)
 	},
 }
 

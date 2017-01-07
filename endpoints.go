@@ -24,6 +24,7 @@ package owo
 // APIRoot defines base url for the service's API endpoints
 const APIRoot = "https://api.awau.moe"
 
+// FileUploadLimit defines a set limit for pre-flight check before uploading files
 const FileUploadLimit = 83886080
 
 var (
