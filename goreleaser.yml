@@ -1,6 +1,7 @@
 repo: whats-this/owo.go
 binary_name: gowo
 build:
+  main: cmd/gowo/main.go
   arches:
     - amd64
     - 386
