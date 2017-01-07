@@ -21,6 +21,8 @@
 
 package owo
 
+import "fmt"
+
 type (
 	// Response contains json marshalled response from owo
 	Response struct {
@@ -40,7 +42,17 @@ type (
 		Errorcode   int    `json:"errorcode,omitempty"`
 		Description string `json:"description,omitempty"`
 	}
+
+	// ErrUploadFailed thrown when success flag on response is false
+	ErrUploadFailed struct {
+		Message   string
+		ErrorCode int
+	}
 )
+
+func (e ErrUploadFailed) Error() string {
+	return fmt.Sprintf("Upload failed with code %d and message '%s'", e.ErrorCode, e.Message)
+}
 
 // WithCDN returns file url prefixed with the CDN
 func (f File) WithCDN(cdn string) string {

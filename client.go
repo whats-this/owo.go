@@ -138,6 +138,9 @@ func (o *Client) UploadFiles(ctx context.Context, rs []NamedReader) (response *R
 	if err != nil {
 		return
 	}
+	if !response.Success {
+		return nil, &ErrUploadFailed{response.Description, response.Errorcode}
+	}
 
 	return
 }
