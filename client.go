@@ -147,30 +147,30 @@ func (o *Client) UploadFiles(ctx context.Context, rs []NamedReader) (response *R
 */
 
 // ShortenURL shortens a single url using the global client
-func ShortenURL(ctx context.Context, url string) (shortend string, err error) {
+func ShortenURL(ctx context.Context, url string) (shortened string, err error) {
 	return global.ShortenURL(ctx, url)
 }
 
 // ShortenURLs shortens multiple urls using the global client
-func ShortenURLs(ctx context.Context, urls []string) (shortend []string, err error) {
+func ShortenURLs(ctx context.Context, urls []string) (shortened []string, err error) {
 	return global.ShortenURLs(ctx, urls)
 }
 
 // ShortenURLs shortens multiple urls
-func (o *Client) ShortenURLs(ctx context.Context, urls []string) (shortend []string, err error) {
-	shortend = make([]string, len(urls))
+func (o *Client) ShortenURLs(ctx context.Context, urls []string) (shortened []string, err error) {
+	shortened = make([]string, len(urls))
 	for idx, u := range urls {
 		result, err := o.ShortenURL(ctx, u)
-		shortend[idx] = result
+		shortened[idx] = result
 		if err != nil {
-			return shortend, err
+			return shortened, err
 		}
 	}
 	return
 }
 
 // ShortenURL shortens a single url
-func (o *Client) ShortenURL(ctx context.Context, u string) (shortend string, err error) {
+func (o *Client) ShortenURL(ctx context.Context, u string) (shortened string, err error) {
 	v := url.Values{}
 	v.Set("key", o.Key)
 	v.Set("action", "shorten")
@@ -200,6 +200,6 @@ func (o *Client) ShortenURL(ctx context.Context, u string) (shortend string, err
 	if err != nil {
 		return
 	}
-	shortend = string(respstr)
+	shortened = string(respstr)
 	return
 }

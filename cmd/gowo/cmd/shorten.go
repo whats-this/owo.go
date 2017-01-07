@@ -38,12 +38,12 @@ var shortenCmd = &cobra.Command{
 	Use:   "shorten",
 	Short: "Shorten URLs using OwO",
 	Run: func(cmd *cobra.Command, args []string) {
-		shortend, err := owo.ShortenURLs(context.Background(), args)
+		shortened, err := owo.ShortenURLs(context.Background(), args)
 		if err != nil {
 			log.Fatal(err)
 		}
 		buf := bytes.Buffer{}
-		for _, short := range shortend {
+		for _, short := range shortened {
 			fmt.Fprintf(&buf, "%s\n", short)
 		}
 		if shouldClipboard {
@@ -51,7 +51,7 @@ var shortenCmd = &cobra.Command{
 			if err != nil {
 				log.Fatal(err)
 			}
-			log.Printf("Wrote %d URLs to clipboard", len(shortend))
+			log.Printf("Wrote %d URLs to clipboard", len(shortened))
 		} else {
 			fmt.Print(buf.String())
 		}
