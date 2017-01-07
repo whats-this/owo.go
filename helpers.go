@@ -11,6 +11,10 @@ import (
 
 // FilesToNamedReaders Converts a list of file names to named readers.
 func FilesToNamedReaders(names []string) (files []NamedReader, err error) {
+	if len(names) > FileCountLimit {
+		err = ErrTooManyFiles{len(names)}
+		return
+	}
 	files = make([]NamedReader, len(names))
 	var file *os.File
 	var stat os.FileInfo
@@ -72,4 +76,13 @@ func humanateBytes(s uint64, base float64, sizes []string) string {
 	}
 
 	return fmt.Sprintf(f, val, suffix)
+}
+
+// ErrTooManyFiles thrown when file count in upload exceeds filecount limit
+type ErrTooManyFiles struct {
+	Count int
+}
+
+func (e ErrTooManyFiles) Error() string {
+	return fmt.Sprintf("[pre-flight] Too many files (%d > %d)", e.Count, FileCountLimit)
 }

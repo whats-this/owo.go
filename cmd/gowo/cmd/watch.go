@@ -23,14 +23,14 @@ package cmd
 
 import (
 	"log"
+	"sync"
 	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"sync"
-
 	"github.com/fsnotify/fsnotify"
+	"github.com/whats-this/owo.go"
 )
 
 var queue = make(map[string]struct{})
@@ -67,6 +67,9 @@ var watchCmd = &cobra.Command{
 				var names []string
 				queueLock.Lock()
 				for name := range queue {
+					if len(names) == owo.FileCountLimit {
+						break
+					}
 					names = append(names, name)
 					delete(queue, name)
 				}
