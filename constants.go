@@ -27,6 +27,9 @@ const APIRoot = "https://api.awau.moe"
 // FileUploadLimit defines a set limit for pre-flight check before uploading files
 const FileUploadLimit = 83886080
 
+// FileCountLimit defines a set limit of number of files to allow for pre-flight check before uploading the files
+const FileCountLimit = 3
+
 var (
 	// APIFileUploadURL to send POSTs with files to
 	APIFileUploadURL = APIRoot + "/upload/pomf"
