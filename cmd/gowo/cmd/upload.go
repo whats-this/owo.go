@@ -22,16 +22,13 @@
 package cmd
 
 import (
+	"bytes"
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/spf13/cobra"
 
-	"fmt"
-
-	"bytes"
-
-	"github.com/atotto/clipboard"
 	"github.com/spf13/viper"
 	"github.com/whats-this/owo.go"
 )
@@ -59,15 +56,8 @@ func doUpload(cdn string, names []string) {
 		}
 		fmt.Fprintf(&buf, "%s\n", file.WithCDN(cdn))
 	}
-	if shouldClipboard {
-		err = clipboard.WriteAll(buf.String())
-		if err != nil {
-			log.Println("[upload]", err)
-			return
-		}
-		log.Printf("Wrote %d URLs to clipboard", len(response.Files))
-	} else {
-		fmt.Print(buf.String())
+	if err := output(buf.String(), len(response.Files)); err != nil {
+		log.Println("[upload]", err)
 	}
 	response = nil
 }

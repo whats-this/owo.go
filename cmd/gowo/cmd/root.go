@@ -26,6 +26,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/atotto/clipboard"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/whats-this/owo.go"
@@ -33,6 +34,7 @@ import (
 
 var cfgFile string
 var shouldClipboard bool
+var historyFile string
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -54,6 +56,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.gowo.yaml)")
 	RootCmd.PersistentFlags().BoolVar(&shouldClipboard, "clipboard", false, "Copy uploaded file links to clipboard")
+	RootCmd.PersistentFlags().StringVar(&historyFile, "history", "", "File to write saved URLs to")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -79,4 +82,28 @@ func initConfig() {
 	} else {
 		log.Fatal("Please set owo key.")
 	}
+}
+
+func output(data string, count int) (err error) {
+	if shouldClipboard {
+		err = clipboard.WriteAll(data)
+		if err != nil {
+			return
+		}
+		log.Printf("Wrote %d URLs to clipboard", count)
+	} else {
+		fmt.Print(data)
+	}
+	if historyFile != "" {
+		var f *os.File
+		f, err = os.OpenFile(historyFile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
+		if err != nil {
+			return
+		}
+		defer f.Close()
+		if _, err = f.WriteString(data); err != nil {
+			return
+		}
+	}
+	return nil
 }
