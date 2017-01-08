@@ -78,7 +78,7 @@ func initConfig() {
 	}
 
 	if key := viper.GetString("key"); key != "" {
-		owo.SetGlobalKey(key)
+		owo.DefaultClient().Key = key
 	} else {
 		log.Fatal("Please set owo key.")
 	}

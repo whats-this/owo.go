@@ -78,24 +78,14 @@ func NewClient(key, root, upload, shorten string, http *http.Client) *Client {
 	return c
 }
 
-// SetGlobalKey changes global client's API key
-func SetGlobalKey(k string) {
-	global.Key = k
-}
-
-// UploadFile uploads a file using the global client
-func UploadFile(ctx context.Context, r NamedReader) (response *Response, err error) {
-	return global.UploadFile(ctx, r)
+// DefaultClient returns a client with the default, official parameters
+func DefaultClient() *Client {
+	return global
 }
 
 // UploadFile uploads a file
 func (o *Client) UploadFile(ctx context.Context, r NamedReader) (response *Response, err error) {
 	return o.UploadFiles(ctx, []NamedReader{r})
-}
-
-// UploadFiles uploads multiple files using the global client
-func UploadFiles(ctx context.Context, rs []NamedReader) (response *Response, err error) {
-	return global.UploadFiles(ctx, rs)
 }
 
 var quoteEscaper = strings.NewReplacer("\\", "\\\\", `"`, "\\\"")
@@ -104,7 +94,7 @@ func escapeQuotes(s string) string {
 	return quoteEscaper.Replace(s)
 }
 
-// UploadFiles uploads multiple files using the global client
+// UploadFiles uploads multiple files using the client
 func (o *Client) UploadFiles(ctx context.Context, rs []NamedReader) (response *Response, err error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -165,16 +155,6 @@ func (o *Client) UploadFiles(ctx context.Context, rs []NamedReader) (response *R
 /*
    Polr compatible url shortening wrapper
 */
-
-// ShortenURL shortens a single url using the global client
-func ShortenURL(ctx context.Context, url string) (shortened string, err error) {
-	return global.ShortenURL(ctx, url)
-}
-
-// ShortenURLs shortens multiple urls using the global client
-func ShortenURLs(ctx context.Context, urls []string) (shortened []string, err error) {
-	return global.ShortenURLs(ctx, urls)
-}
 
 // ShortenURLs shortens multiple urls
 func (o *Client) ShortenURLs(ctx context.Context, urls []string) (shortened []string, err error) {
