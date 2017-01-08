@@ -30,7 +30,7 @@ import (
 	"io/ioutil"
 	"mime"
 	"mime/multipart"
-	"net/http"
+	nhttp "net/http"
 	"net/textproto"
 	"net/url"
 	"path"
@@ -45,7 +45,7 @@ type (
 		APIRoot               string
 		APIFileUploadEndpoint string
 		APIShortenEndpoint    string
-		http                  *http.Client
+		http                  *nhttp.Client
 	}
 
 	// NamedReader wrapper for a single file to upload
@@ -56,11 +56,15 @@ type (
 )
 
 var (
-	global = NewClient("", OfficialAPIRoot, "", "", &http.Client{Timeout: time.Minute})
+	global = NewClient("", OfficialAPIRoot, "", "", &nhttp.Client{Timeout: time.Minute})
 )
 
 // NewClient returns a fully configured client
-func NewClient(key, root, upload, shorten string, http *http.Client) *Client {
+func NewClient(key, root, upload, shorten string, http *nhttp.Client) *Client {
+	if http == nil {
+		http = &nhttp.Client{}
+	}
+
 	c := &Client{http: http}
 	if key != "" {
 		c.Key = key
@@ -109,7 +113,7 @@ func (o *Client) UploadFiles(ctx context.Context, rs []NamedReader) (response *R
 		if err != nil {
 			return
 		}
-		contenttype := http.DetectContentType(b)
+		contenttype := nhttp.DetectContentType(b)
 		if contenttype == "application/octet-stream" {
 			contenttype = mime.TypeByExtension(path.Ext(r.Filename))
 			if contenttype == "" {
@@ -132,7 +136,7 @@ func (o *Client) UploadFiles(ctx context.Context, rs []NamedReader) (response *R
 		return
 	}
 
-	req, err := http.NewRequest("POST", o.APIRoot+APIFileUploadEndpoint, body)
+	req, err := nhttp.NewRequest("POST", o.APIRoot+APIFileUploadEndpoint, body)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	req.Header.Set("Authorization", o.Key)
 	req = req.WithContext(ctx)
@@ -181,7 +185,7 @@ func (o *Client) ShortenURL(ctx context.Context, u string) (shortened string, er
 	}
 	au.RawQuery = v.Encode()
 
-	req, err := http.NewRequest("GET", au.String(), nil)
+	req, err := nhttp.NewRequest("GET", au.String(), nil)
 	if err != nil {
 		return
 	}
