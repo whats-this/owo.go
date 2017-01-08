@@ -1,4 +1,4 @@
-# go-owo
+# go-owo [![Travis](https://img.shields.io/travis/whats-this/owo.go.svg)](https://travis-ci.org/whats-this/owo.go) [![Codecov](https://img.shields.io/codecov/c/github/whats-this/owo.go.svg)](https://codecov.io/gh/whats-this/owo.go)
 
 # Install
 
@@ -8,7 +8,7 @@
      2. Run the command `go get -u github.com/whats-this/owo.go/...`, this should get the library and build/install latest CLI.
  3. Check the CLI to learn how to use the library.
 
-# gowo - CLI for owo
+# gowo - CLI for owo [![Github All Releases](https://img.shields.io/github/downloads/whats-this/owo.go/total.svg)](https://github.com/whats-this/owo.go/releases) [![GitHub release](https://img.shields.io/github/release/whats-this/owo.go.svg)](https://github.com/whats-this/owo.go/releases)
 
 This is an example of how to use the library and also serves as a neat CLI.
 You can find built binaries [here](https://github.com/whats-this/owo.go/releases).
