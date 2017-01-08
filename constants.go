@@ -21,21 +21,24 @@
 
 package owo
 
-// OfficialAPIRoot defines base url for the service's API endpoints
-const OfficialAPIRoot = "https://api.awau.moe"
+const (
+	// OfficialAPIRoot defines base url for the service's API endpoints
+	OfficialAPIRoot = "https://api.awau.moe"
 
-// FileUploadLimit defines a set limit for pre-flight check before uploading files
-const FileUploadLimit = 83886080
-
-// FileCountLimit defines a set limit of number of files to allow for pre-flight check before uploading the files
-const FileCountLimit = 3
-
-var (
 	// APIFileUploadEndpoint to send POSTs with files to
 	APIFileUploadEndpoint = "/upload/pomf"
+
 	// APIShortenEndpoint to send GETs with urls to
 	APIShortenEndpoint = "/shorten/polr"
 
+	// FileUploadLimit defines a set limit for pre-flight check before uploading files
+	FileUploadLimit = 83886080
+
+	// FileCountLimit defines a set limit of number of files to allow for pre-flight check before uploading the files
+	FileCountLimit = 3
+)
+
+var (
 	// CDNs represnts a list of CDNs available as of 04/01/2017
 	CDNs = []string{
 		"https://owo.whats-th.is/",

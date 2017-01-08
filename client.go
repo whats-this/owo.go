@@ -41,10 +41,11 @@ import (
 type (
 	// Client stores http client and key
 	Client struct {
-		Key     string
-		APIRoot string
-		Domain  string
-		http    *http.Client
+		Key                   string
+		APIRoot               string
+		APIFileUploadEndpoint string
+		APIShortenEndpoint    string
+		http                  *http.Client
 	}
 
 	// NamedReader wrapper for a single file to upload
@@ -55,16 +56,30 @@ type (
 )
 
 var (
-	global = Client{
-		APIRoot: OfficialAPIRoot,
-		http: &http.Client{
-			Timeout: time.Minute,
-		},
-	}
+	global = NewClient("", OfficialAPIRoot, "", "", &http.Client{Timeout: time.Minute})
 )
 
-// SetKey changes global client's API key
-func SetKey(k string) {
+// NewClient returns a fully configured client
+func NewClient(key, root, upload, shorten string, http *http.Client) *Client {
+	c := &Client{http: http}
+	if key != "" {
+		c.Key = key
+	}
+	if root != "" {
+		c.APIRoot = root
+	}
+	if upload != "" {
+		c.APIFileUploadEndpoint = upload
+	}
+	if shorten != "" {
+		c.APIShortenEndpoint = shorten
+	}
+
+	return c
+}
+
+// SetGlobalKey changes global client's API key
+func SetGlobalKey(k string) {
 	global.Key = k
 }
 
