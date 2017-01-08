@@ -41,9 +41,10 @@ import (
 type (
 	// Client stores http client and key
 	Client struct {
-		Key    string
-		Domain string
-		http   *http.Client
+		Key     string
+		APIRoot string
+		Domain  string
+		http    *http.Client
 	}
 
 	// NamedReader wrapper for a single file to upload
@@ -55,6 +56,7 @@ type (
 
 var (
 	global = Client{
+		APIRoot: OfficialAPIRoot,
 		http: &http.Client{
 			Timeout: time.Minute,
 		},
@@ -125,7 +127,7 @@ func (o *Client) UploadFiles(ctx context.Context, rs []NamedReader) (response *R
 		return
 	}
 
-	req, err := http.NewRequest("POST", APIFileUploadURL, body)
+	req, err := http.NewRequest("POST", o.APIRoot+APIFileUploadEndpoint, body)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	req.Header.Set("Authorization", o.Key)
 	req = req.WithContext(ctx)
@@ -178,7 +180,7 @@ func (o *Client) ShortenURL(ctx context.Context, u string) (shortened string, er
 	v.Set("key", o.Key)
 	v.Set("action", "shorten")
 	v.Add("url", u)
-	au, err := url.Parse(APIShortenURL)
+	au, err := url.Parse(o.APIRoot + APIShortenEndpoint)
 	if err != nil {
 		return
 	}
