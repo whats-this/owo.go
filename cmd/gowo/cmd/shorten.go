@@ -36,7 +36,7 @@ var shortenCmd = &cobra.Command{
 	Use:   "shorten",
 	Short: "Shorten URLs using OwO",
 	Run: func(cmd *cobra.Command, args []string) {
-		shortened, err := owo.ShortenURLs(context.Background(), args)
+		shortened, err := owo.DefaultClient().ShortenURLs(context.Background(), args)
 		if err != nil {
 			log.Fatal(err)
 		}

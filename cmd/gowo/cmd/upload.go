@@ -40,7 +40,7 @@ func doUpload(cdn string, names []string) (err error) {
 		return
 	}
 	var response *owo.Response
-	response, err = owo.UploadFiles(context.Background(), files)
+	response, err = owo.DefaultClient().UploadFiles(context.Background(), files)
 	if err != nil {
 		return
 	}
