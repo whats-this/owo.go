@@ -53,9 +53,16 @@ func newServer() *httptest.Server {
 }
 
 func TestClient(t *testing.T) {
-	ts := newServer()
-	var client *owo.Client
-	client = owo.NewClient("TEST-KEY", ts.URL, "", "", &http.Client{})
+	/*
+		Zeta - 2017-01-08 at 12:40 PM
+		make a small commit fixing that error
+		that test was just a markup, doesn't do anythin
+	*/
+	t.SkipNow()
+
+	//ts := newServer()
+	//var client *owo.Client
+	//client = owo.NewClient("TEST-KEY", ts.URL, "", "", &http.Client{})
 	// t.Run("upload-one-10kb", func(t *testing.T) {
 	// 	var resp *owo.Response
 	// 	var err error
