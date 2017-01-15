@@ -1,11 +1,12 @@
-repo: whats-this/owo.go
-binary_name: gowo
+release:
+  repo: whats-this/owo.go
 build:
+  binary_name: gowo
   main: cmd/gowo/main.go
-  arches:
+  goarch:
     - amd64
     - 386
-  oses:
+  goos:
     - windows
     - darwin
     - linux
