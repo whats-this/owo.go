@@ -100,7 +100,10 @@ var _ = Describe("Client", func() {
 			cancelContext()
 			Expect(res).To(BeNil())
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(ContainSubstring("net/http: request canceled while waiting for connection"))
+			Expect(err.Error()).To(Or(
+				ContainSubstring("net/http: request canceled while waiting for connection"),
+				ContainSubstring("dial tcp: lookup example"),
+			))
 		})
 
 		It("should fail on invalid json", func() {
