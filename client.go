@@ -149,10 +149,6 @@ func (o *Client) UploadFiles(ctx context.Context, rs []NamedReader) (response *R
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	req.Header.Set("Authorization", o.Key)
 
-	if ctx != nil {
-		req = req.WithContext(ctx)
-	}
-
 	resp, err := o.http.Do(req)
 	if err != nil {
 		return
