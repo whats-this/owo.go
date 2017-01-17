@@ -113,12 +113,12 @@ func (o *Client) UploadFiles(ctx context.Context, rs []NamedReader) (response *R
 	writer := multipart.NewWriter(body)
 	for _, r := range rs {
 		h := make(textproto.MIMEHeader)
-		h.Set("Content-Disposition", fmt.Sprintf(`form-data; name="files[]" filename="%s"`, escapeQuotes(r.Filename)))
+		h.Set("Content-Disposition", fmt.Sprintf(`form-data; name="files[]"; filename="%s"`, escapeQuotes(r.Filename)))
 
 		var buf bytes.Buffer
 		var b []byte
 		tee := io.TeeReader(r.Reader, &buf)
-		b, err = ioutil.ReadAll(&buf)
+		b, err = ioutil.ReadAll(tee)
 		if err != nil {
 			return
 		}
@@ -131,24 +131,27 @@ func (o *Client) UploadFiles(ctx context.Context, rs []NamedReader) (response *R
 		}
 		h.Set("Content-Type", contenttype)
 
-		part, err := writer.CreatePart(h)
-		if err != nil {
-			return nil, err
-		}
-		_, err = io.Copy(part, tee)
-		if err != nil {
-			return nil, err
-		}
-	}
-	err = writer.Close()
-	if err != nil {
-		return
+		// no error checking necessary
+		// - `writer` uses `body` (writes to bytes.Buffer). It only throws if it runs out of memory.
+		part, _ := writer.CreatePart(h)
+
+		// no error checking necessary
+		// - `part` is a valid destination (indirect write to bytes.Buffer). It only throws if it runs out of memory.
+		// - `buf` is always a valid source (bytes.Buffer). It always returns data or EOF (which is not an error for Copy).
+		io.Copy(part, &buf)
 	}
 
-	req, err := nhttp.NewRequest("POST", o.APIRoot+APIFileUploadEndpoint, body)
+	// no error checking necessary
+	// - `writer` uses `body` (writes to bytes.Buffer). It only throws if it runs out of memory.
+	err = writer.Close()
+
+	req, err := nhttp.NewRequest("POST", o.APIRoot+o.APIFileUploadEndpoint, body)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	req.Header.Set("Authorization", o.Key)
-	req = req.WithContext(ctx)
+
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
 
 	resp, err := o.http.Do(req)
 	if err != nil {

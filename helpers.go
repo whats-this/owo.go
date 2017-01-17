@@ -37,7 +37,7 @@ func FilesToNamedReaders(names []string) (files []NamedReader, err error) {
 		if err != nil {
 			return
 		}
-		files[idx] = NamedReader{bytes.NewReader(bb.Bytes()), name}
+		files[idx] = NamedReader{bytes.NewReader(bb.Bytes()), stat.Name()}
 		err = file.Close()
 		if err != nil {
 			return
