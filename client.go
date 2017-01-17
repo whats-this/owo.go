@@ -69,14 +69,23 @@ func NewClient(key, root, upload, shorten string, http *nhttp.Client) *Client {
 	if key != "" {
 		c.Key = key
 	}
+
 	if root != "" {
 		c.APIRoot = root
+	} else {
+		c.APIRoot = OfficialAPIRoot
 	}
+
 	if upload != "" {
 		c.APIFileUploadEndpoint = upload
+	} else {
+		c.APIFileUploadEndpoint = APIFileUploadEndpoint
 	}
+
 	if shorten != "" {
 		c.APIShortenEndpoint = shorten
+	} else {
+		c.APIShortenEndpoint = APIShortenEndpoint
 	}
 
 	return c

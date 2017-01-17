@@ -1,85 +1,53 @@
+// MIT License
+
+// Copyright (c) 2017 @cking / @Kura Bloodlust#8777 / <im@z0ne.moe>
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy of
+// this software and associated documentation files (the "Software"), to deal in
+// the Software without restriction, including without limitation the rights to
+// use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+// the Software, and to permit persons to whom the Software is furnished to do so,
+// subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+// FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+// COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+// CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 package owo_test
 
 import (
-	"math/rand"
-	"net/http"
-	"net/http/httptest"
-	"testing"
-	"time"
+	. "github.com/whats-this/owo.go"
 
-	"github.com/whats-this/owo.go"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
-var src = rand.NewSource(time.Now().UnixNano())
+var _ = Describe("Client", func() {
+	Describe("The Constructor", func() {
+		It("should create an empty client if no parameters are specified", func() {
+			client := NewClient("", "", "", "", nil)
+			Expect(client.APIFileUploadEndpoint).To(Equal(APIFileUploadEndpoint))
+			Expect(DefaultClient().APIRoot).To(Equal(OfficialAPIRoot))
+			Expect(client.APIShortenEndpoint).To(Equal(APIShortenEndpoint))
+			Expect(client.Key).To(BeEmpty())
+		})
 
-const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-const (
-	letterIdxBits = 6                    // 6 bits to represent a letter index
-	letterIdxMask = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
-	letterIdxMax  = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
-)
+		It("should create a new client with the passed parameters", func() {
+			client := NewClient("key", "root", "upload", "shorten", nil)
+			Expect(client.APIFileUploadEndpoint).To(Equal("upload"))
+			Expect(client.APIRoot).To(Equal("root"))
+			Expect(client.APIShortenEndpoint).To(Equal("shorten"))
+			Expect(client.Key).To(Equal("key"))
+		})
 
-func randStringBytesMaskImprSrc(n int) string {
-	b := make([]byte, n)
-	// A src.Int63() generates 63 random bits, enough for letterIdxMax characters!
-	for i, cache, remain := n-1, src.Int63(), letterIdxMax; i >= 0; {
-		if remain == 0 {
-			cache, remain = src.Int63(), letterIdxMax
-		}
-		if idx := int(cache & letterIdxMask); idx < len(letterBytes) {
-			b[i] = letterBytes[idx]
-			i--
-		}
-		cache >>= letterIdxBits
-		remain--
-	}
-
-	return string(b)
-}
-
-func newServer() *httptest.Server {
-	mux := http.NewServeMux()
-
-	mux.HandleFunc(owo.APIFileUploadEndpoint, func(w http.ResponseWriter, r *http.Request) {
-
+		It("should have a default client available, pointing to the official owo endpoint", func() {
+			Expect(DefaultClient().APIRoot).To(Equal(OfficialAPIRoot))
+		})
 	})
-
-	mux.HandleFunc(owo.APIShortenEndpoint, func(w http.ResponseWriter, r *http.Request) {
-
-	})
-
-	s := httptest.NewServer(mux)
-	return s
-}
-
-func TestClient(t *testing.T) {
-	/*
-		Zeta - 2017-01-08 at 12:40 PM
-		make a small commit fixing that error
-		that test was just a markup, doesn't do anythin
-	*/
-	t.SkipNow()
-
-	//ts := newServer()
-	//var client *owo.Client
-	//client = owo.NewClient("TEST-KEY", ts.URL, "", "", &http.Client{})
-	// t.Run("upload-one-10kb", func(t *testing.T) {
-	// 	var resp *owo.Response
-	// 	var err error
-	// 	resp, err = client.UploadFile(context.Background(), owo.NamedReader{
-	// 		Reader:   strings.NewReader(randStringBytesMaskImprSrc(10000)),
-	// 		Filename: "test.txt",
-	// 	})
-	// 	if err != nil {
-	// 		t.Error(err)
-	// 	}
-	// 	if len(resp.Files) != 1 {
-	// 		t.Error("Not enough files in response")
-	// 	}
-	// })
-	// t.Run("upload-one-100mb", func(t *testing.T) {
-	// 	if testing.Short() {
-	// 		t.Skip("skipping test in short mode.")
-	// 	}
-	// })
-}
+})
