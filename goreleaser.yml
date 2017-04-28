@@ -1,8 +1,10 @@
 release:
-  repo: whats-this/owo.go
+  github: 
+    owner: whats-this
+    name: owo.go
 build:
-  binary_name: gowo
-  main: cmd/gowo/main.go
+  binary: gowo
+  main: ./cmd/gowo/main.go
   goarch:
     - amd64
     - 386
