@@ -43,5 +43,5 @@ var screenshotCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(screenshotCmd)
 
-	screenshotCmd.Flags().String("--maim", "-s", "Flags to pass on to maim (linux only, defaults to '-s')")
+	screenshotCmd.Flags().String("maim", "-s", "Flags to pass on to maim (linux only, defaults to '-s')")
 }
